@@ -1,0 +1,1199 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f766e" />
+  <title>Avaliação de Pacientes Internados</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --ink:#172033;
+      --muted:#64748b;
+      --line:#d9e2ec;
+      --brand:#0f766e;
+      --brand2:#115e59;
+      --soft:#e8f5f3;
+      --danger:#b42318;
+      --warn:#b54708;
+      --ok:#067647;
+      --shadow: 0 8px 25px rgba(15,23,42,.08);
+      --radius:18px;
+      --input:#ffffff;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(15,118,110,.16), transparent 28rem),
+        linear-gradient(180deg,#f8fafc,#eef3f8 60%,#f8fafc);
+      min-height:100vh;
+    }
+    header{
+      position:sticky;
+      top:0;
+      z-index:20;
+      backdrop-filter: blur(14px);
+      background: rgba(245,247,251,.86);
+      border-bottom:1px solid rgba(217,226,236,.8);
+    }
+    .wrap{max-width:1120px;margin:0 auto;padding:16px}
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(135deg,var(--brand),#14b8a6);
+      color:white;display:grid;place-items:center;font-weight:900;
+      box-shadow: var(--shadow);
+      flex:0 0 auto;
+    }
+    h1{font-size:1.18rem;margin:0;line-height:1.15}
+    .subtitle{font-size:.82rem;color:var(--muted);margin-top:2px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    button,.btn{
+      border:0;
+      border-radius:12px;
+      padding:10px 13px;
+      background:var(--brand);
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(15,118,110,.18);
+      min-height:40px;
+    }
+    button:hover,.btn:hover{background:var(--brand2)}
+    button.secondary{
+      background:#e2e8f0;color:#172033;box-shadow:none;
+    }
+    button.secondary:hover{background:#cbd5e1}
+    button.ghost{
+      background:transparent;color:var(--brand);box-shadow:none;border:1px solid rgba(15,118,110,.28);
+    }
+    button.danger{background:var(--danger)}
+    button.warn{background:var(--warn)}
+    button.small{padding:8px 10px;min-height:34px;font-size:.9rem}
+    nav{
+      display:flex;
+      overflow:auto;
+      gap:8px;
+      padding:8px 16px 14px;
+      max-width:1120px;
+      margin:0 auto;
+    }
+    nav a{
+      white-space:nowrap;
+      text-decoration:none;
+      color:var(--brand2);
+      background:#fff;
+      border:1px solid var(--line);
+      padding:8px 11px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:.86rem;
+    }
+    main{max-width:1120px;margin:0 auto;padding:16px 16px 40px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+    .card{
+      grid-column:span 12;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(217,226,236,.95);
+      border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    .half{grid-column:span 6}
+    .third{grid-column:span 4}
+    .two-third{grid-column:span 8}
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      margin-bottom:12px;
+    }
+    h2{font-size:1.08rem;margin:0 0 4px}
+    .hint{font-size:.86rem;color:var(--muted);line-height:1.35}
+    .fieldgrid{
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:10px;
+    }
+    label{
+      display:block;
+      font-size:.82rem;
+      font-weight:750;
+      color:#334155;
+      margin:0 0 5px;
+    }
+    .field{grid-column:span 4}
+    .field.smallfield{grid-column:span 3}
+    .field.wide{grid-column:span 6}
+    .field.full{grid-column:span 12}
+    input,select,textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 11px;
+      background:var(--input);
+      color:var(--ink);
+      outline:none;
+      font:inherit;
+      min-height:42px;
+    }
+    input:focus,select:focus,textarea:focus{
+      border-color:#14b8a6;
+      box-shadow:0 0 0 3px rgba(20,184,166,.16);
+    }
+    textarea{min-height:88px;resize:vertical}
+    .timer{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      background:var(--soft);
+      border:1px solid rgba(15,118,110,.16);
+      border-radius:16px;
+      padding:14px;
+      margin:10px 0 12px;
+    }
+    .display{
+      font-variant-numeric: tabular-nums;
+      font-size:2.35rem;
+      font-weight:900;
+      letter-spacing:.5px;
+      text-align:center;
+      color:var(--brand2);
+      background:#fff;
+      border-radius:14px;
+      padding:12px 8px;
+      border:1px solid rgba(15,118,110,.18);
+    }
+    .timer-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+    .counterBox{
+      display:grid;
+      grid-template-columns:82px 1fr 82px;
+      align-items:center;
+      gap:10px;
+      margin:10px 0;
+    }
+    .counterValue{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      font-size:3.2rem;
+      line-height:1;
+      font-weight:900;
+      min-height:88px;
+      display:grid;
+      place-items:center;
+      font-variant-numeric: tabular-nums;
+    }
+    .counterBox button{
+      min-height:78px;
+      font-size:1.6rem;
+      border-radius:16px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 9px;
+      border-radius:999px;
+      font-size:.8rem;
+      font-weight:800;
+      background:#eef2ff;
+      color:#3730a3;
+      border:1px solid #c7d2fe;
+      margin:2px 4px 2px 0;
+    }
+    .result{
+      margin-top:10px;
+      padding:11px;
+      border-radius:14px;
+      background:#f8fafc;
+      border:1px solid var(--line);
+      font-size:.93rem;
+      line-height:1.42;
+    }
+    .ok{color:var(--ok);font-weight:800}
+    .warnText{color:var(--warn);font-weight:800}
+    .dangerText{color:var(--danger);font-weight:800}
+    .mrc-table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0 8px;
+      font-size:.92rem;
+    }
+    .mrc-table th{
+      color:var(--muted);
+      font-size:.78rem;
+      text-align:left;
+      padding:0 8px;
+    }
+    .mrc-table td{
+      background:#f8fafc;
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+      padding:8px;
+    }
+    .mrc-table td:first-child{border-left:1px solid var(--line);border-radius:12px 0 0 12px;font-weight:750}
+    .mrc-table td:last-child{border-right:1px solid var(--line);border-radius:0 12px 12px 0}
+    .mrc-table select{min-height:38px;padding:7px 8px}
+    .reportArea{
+      width:100%;
+      min-height:320px;
+      white-space:pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:.9rem;
+      line-height:1.45;
+      background:#0f172a;
+      color:#e2e8f0;
+      border-color:#1e293b;
+    }
+    .notice{
+      border-left:4px solid var(--brand);
+      padding:10px 12px;
+      background:#ecfdf5;
+      border-radius:12px;
+      color:#164e3c;
+      font-size:.88rem;
+      margin-top:10px;
+    }
+    .footer-note{color:var(--muted);font-size:.82rem;line-height:1.35;margin-top:14px}
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background:#0f172a;
+      color:white;
+      padding:10px 14px;
+      border-radius:999px;
+      box-shadow:var(--shadow);
+      font-size:.9rem;
+      display:none;
+      z-index:100;
+    }
+    .toast.show{display:block}
+    @media(max-width:760px){
+      .topbar{align-items:flex-start}
+      .actions{width:100%;justify-content:flex-start}
+      .topbar{flex-direction:column}
+      .half,.third,.two-third{grid-column:span 12}
+      .field,.field.wide,.field.smallfield{grid-column:span 12}
+      .counterBox{grid-template-columns:68px 1fr 68px}
+      .counterBox button{min-height:68px}
+      .counterValue{font-size:2.8rem;min-height:76px}
+      .display{font-size:2rem}
+      .section-head{flex-direction:column}
+      nav{padding-left:16px}
+    }
+    @media print{
+      header,nav,.actions,.timer,.timer-actions,.counterBox button,.no-print{display:none!important}
+      body{background:white}
+      main{padding:0;max-width:100%}
+      .card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}
+      .reportArea{background:white;color:#111;border:1px solid #ddd}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div class="brand">
+        <div class="logo">AI</div>
+        <div>
+          <h1>Avaliação de Pacientes Internados</h1>
+          <div class="subtitle">TUG 3 m · FPM · CP · TSL30s · MRC</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" class="secondary" id="installBtn" hidden>Instalar app</button>
+        <button type="button" class="secondary" onclick="saveNow()">Salvar</button>
+        <button type="button" class="ghost" onclick="clearForm()">Limpar</button>
+        <button type="button" onclick="generateReport()">Gerar evolução</button>
+      </div>
+    </div>
+    <nav>
+      <a href="#identificacao">Identificação</a>
+      <a href="#tug">TUG 3 m</a>
+      <a href="#fpm">FPM</a>
+      <a href="#cp">CP</a>
+      <a href="#tsl">TSL30s</a>
+      <a href="#mrc">MRC</a>
+      <a href="#relatorio">Evolução</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="identificacao" class="grid">
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h2>Identificação e segurança inicial</h2>
+            <div class="hint">Preencha os dados básicos antes dos testes. O app salva automaticamente neste navegador.</div>
+          </div>
+          <span class="pill">Modo beira-leito</span>
+        </div>
+        <div class="fieldgrid">
+          <div class="field wide">
+            <label for="paciente">Nome do paciente</label>
+            <input id="paciente" placeholder="Ex.: Maria Aparecida..." />
+          </div>
+          <div class="field">
+            <label for="prontuario">Prontuário</label>
+            <input id="prontuario" placeholder="Nº do prontuário" />
+          </div>
+          <div class="field smallfield">
+            <label for="data">Data</label>
+            <input id="data" type="date" />
+          </div>
+          <div class="field smallfield">
+            <label for="idade">Idade</label>
+            <input id="idade" type="number" min="0" max="120" placeholder="anos" />
+          </div>
+          <div class="field smallfield">
+            <label for="sexo">Sexo</label>
+            <select id="sexo">
+              <option value="">Selecionar</option>
+              <option>Feminino</option>
+              <option>Masculino</option>
+              <option>Outro/Não informado</option>
+            </select>
+          </div>
+          <div class="field smallfield">
+            <label for="leito">Leito/Enfermaria</label>
+            <input id="leito" placeholder="Ex.: Clínica Médica" />
+          </div>
+          <div class="field wide">
+            <label for="diagnostico">Diagnóstico/condição principal</label>
+            <input id="diagnostico" placeholder="Ex.: DRC, pós-operatório, AVC, descondicionamento..." />
+          </div>
+          <div class="field wide">
+            <label for="avaliador">Avaliador</label>
+            <input id="avaliador" placeholder="Profissional responsável" />
+          </div>
+          <div class="field smallfield">
+            <label for="pa_pre">PA pré</label>
+            <input id="pa_pre" placeholder="Ex.: 120x80" />
+          </div>
+          <div class="field smallfield">
+            <label for="fc_pre">FC pré</label>
+            <input id="fc_pre" type="number" placeholder="bpm" />
+          </div>
+          <div class="field smallfield">
+            <label for="spo2_pre">SpO₂ pré</label>
+            <input id="spo2_pre" type="number" placeholder="%" />
+          </div>
+          <div class="field smallfield">
+            <label for="borg_pre">Borg pré</label>
+            <input id="borg_pre" type="number" min="0" max="10" placeholder="0-10" />
+          </div>
+          <div class="field full">
+            <label for="triagem">Observações de segurança antes da avaliação</label>
+            <textarea id="triagem" placeholder="Dor, tontura, dispneia, acesso venoso, cateter, restrições de carga, necessidade de auxílio, risco de queda..."></textarea>
+          </div>
+        </div>
+        <div class="notice">
+          Atenção: este app organiza a coleta e o relatório. A decisão clínica continua sendo do profissional, com ajuste ao contexto do paciente.
+        </div>
+      </div>
+    </section>
+
+    <section id="tug" class="grid">
+      <div class="card half">
+        <div class="section-head">
+          <div>
+            <h2>TUG 3 metros</h2>
+            <div class="hint">Cronômetro para levantar, caminhar 3 m, retornar e sentar. Salve cada tentativa no campo desejado.</div>
+          </div>
+          <span class="pill">Cronômetro</span>
+        </div>
+
+        <div class="timer">
+          <div class="display" id="tugDisplay">00.00 s</div>
+          <div class="timer-actions">
+            <button type="button" id="tugStartBtn" onclick="toggleTug()">Iniciar</button>
+            <button type="button" class="secondary" onclick="resetTug()">Zerar</button>
+            <button type="button" class="ghost" onclick="saveTugTrial()">Salvar tentativa</button>
+          </div>
+        </div>
+
+        <div class="fieldgrid">
+          <div class="field smallfield">
+            <label for="tug1">Tentativa 1 (s)</label>
+            <input id="tug1" type="number" inputmode="decimal" step="0.01" />
+          </div>
+          <div class="field smallfield">
+            <label for="tug2">Tentativa 2 (s)</label>
+            <input id="tug2" type="number" inputmode="decimal" step="0.01" />
+          </div>
+          <div class="field smallfield">
+            <label for="tug3">Tentativa 3 (s)</label>
+            <input id="tug3" type="number" inputmode="decimal" step="0.01" />
+          </div>
+          <div class="field smallfield">
+            <label for="tug_auxilio">Nível de auxílio</label>
+            <select id="tug_auxilio">
+              <option>Independente</option>
+              <option>Supervisão</option>
+              <option>Auxílio mínimo</option>
+              <option>Auxílio moderado</option>
+              <option>Auxílio máximo</option>
+              <option>Não realizado</option>
+            </select>
+          </div>
+          <div class="field wide">
+            <label for="tug_dispositivo">Dispositivo/apoio</label>
+            <input id="tug_dispositivo" placeholder="Sem apoio, andador, bengala, acompanhante..." />
+          </div>
+          <div class="field wide">
+            <label for="tug_obs">Observações</label>
+            <input id="tug_obs" placeholder="Instabilidade, dor, pausa, tontura, medo de queda..." />
+          </div>
+        </div>
+        <div class="result" id="tugResult">Melhor tempo: — · Média: —</div>
+      </div>
+
+      <div id="fpm" class="card half">
+        <div class="section-head">
+          <div>
+            <h2>Dinamometria de punho — FPM</h2>
+            <div class="hint">Registre 3 medidas por mão em kgf. O app mostra o melhor valor, sem substituir sua interpretação clínica.</div>
+          </div>
+          <span class="pill">kgf</span>
+        </div>
+        <div class="fieldgrid">
+          <div class="field smallfield">
+            <label for="dominancia">Dominância</label>
+            <select id="dominancia">
+              <option value="">Selecionar</option>
+              <option>Direita</option>
+              <option>Esquerda</option>
+              <option>Ambidestra</option>
+              <option>Não informado</option>
+            </select>
+          </div>
+          <div class="field smallfield">
+            <label for="fpm_posicao">Posição</label>
+            <select id="fpm_posicao">
+              <option>Sentado</option>
+              <option>Leito elevado</option>
+              <option>Decúbito</option>
+              <option>Ortostase</option>
+            </select>
+          </div>
+          <div class="field smallfield">
+            <label for="fpm_limitacao">Limitação</label>
+            <select id="fpm_limitacao">
+              <option>Não</option>
+              <option>Dor</option>
+              <option>Acesso/curativo</option>
+              <option>Paresia</option>
+              <option>Compreensão</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="field smallfield">
+            <label for="fpm_unidade">Unidade</label>
+            <select id="fpm_unidade">
+              <option>kgf</option>
+              <option>N</option>
+            </select>
+          </div>
+
+          <div class="field smallfield">
+            <label for="fpm_d1">MSD 1</label>
+            <input id="fpm_d1" type="number" step="0.1" inputmode="decimal" />
+          </div>
+          <div class="field smallfield">
+            <label for="fpm_d2">MSD 2</label>
+            <input id="fpm_d2" type="number" step="0.1" inputmode="decimal" />
+          </div>
+          <div class="field smallfield">
+            <label for="fpm_d3">MSD 3</label>
+            <input id="fpm_d3" type="number" step="0.1" inputmode="decimal" />
+          </div>
+          <div class="field smallfield">
+            <label for="fpm_d_melhor">Melhor MSD</label>
+            <input id="fpm_d_melhor" readonly />
+          </div>
+
+          <div class="field smallfield">
+            <label for="fpm_e1">MSE 1</label>
+            <input id="fpm_e1" type="number" step="0.1" inputmode="decimal" />
+          </div>
+          <div class="field smallfield">
+            <label for="fpm_e2">MSE 2</label>
+            <input id="fpm_e2" type="number" step="0.1" inputmode="decimal" />
+          </div>
+          <div class="field smallfield">
+            <label for="fpm_e3">MSE 3</label>
+            <input id="fpm_e3" type="number" step="0.1" inputmode="decimal" />
+          </div>
+          <div class="field smallfield">
+            <label for="fpm_e_melhor">Melhor MSE</label>
+            <input id="fpm_e_melhor" readonly />
+          </div>
+
+          <div class="field full">
+            <label for="fpm_obs">Observações</label>
+            <input id="fpm_obs" placeholder="Dor, fadiga, baixa compreensão, lado acometido, restrição em membro..." />
+          </div>
+        </div>
+        <div class="result" id="fpmResult">Melhor valor geral: —</div>
+      </div>
+    </section>
+
+    <section id="cp" class="grid">
+      <div class="card half">
+        <div class="section-head">
+          <div>
+            <h2>Circunferência de panturrilha — CP</h2>
+            <div class="hint">Registre medidas em centímetros. Use o mesmo ponto anatômico nas reavaliações.</div>
+          </div>
+          <span class="pill">cm</span>
+        </div>
+        <div class="fieldgrid">
+          <div class="field smallfield">
+            <label for="cp_d">CP direita</label>
+            <input id="cp_d" type="number" step="0.1" inputmode="decimal" placeholder="cm" />
+          </div>
+          <div class="field smallfield">
+            <label for="cp_e">CP esquerda</label>
+            <input id="cp_e" type="number" step="0.1" inputmode="decimal" placeholder="cm" />
+          </div>
+          <div class="field smallfield">
+            <label for="cp_menor">Menor CP</label>
+            <input id="cp_menor" readonly />
+          </div>
+          <div class="field smallfield">
+            <label for="edema">Edema MMII</label>
+            <select id="edema">
+              <option>Não observado</option>
+              <option>Leve</option>
+              <option>Moderado</option>
+              <option>Importante</option>
+              <option>Não avaliado</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="cp_obs">Observações</label>
+            <input id="cp_obs" placeholder="Edema, assimetria, dor, curativo, amputação, dificuldade de posicionamento..." />
+          </div>
+        </div>
+        <div class="result" id="cpResult">Menor circunferência: —</div>
+      </div>
+
+      <div id="tsl" class="card half">
+        <div class="section-head">
+          <div>
+            <h2>Teste de Sentar e Levantar — TSL30s</h2>
+            <div class="hint">Cronômetro regressivo de 30 segundos com contador de repetições.</div>
+          </div>
+          <span class="pill">Contador + timer</span>
+        </div>
+
+        <div class="timer">
+          <div class="display" id="tslDisplay">30.00 s</div>
+          <div class="timer-actions">
+            <button type="button" id="tslStartBtn" onclick="toggleTsl()">Iniciar</button>
+            <button type="button" class="secondary" onclick="resetTsl()">Zerar</button>
+            <button type="button" class="ghost" onclick="syncTslReps()">Salvar repetições</button>
+          </div>
+        </div>
+
+        <div class="counterBox">
+          <button type="button" class="warn" onclick="changeReps(-1)">−</button>
+          <div class="counterValue" id="repCounter">0</div>
+          <button type="button" onclick="changeReps(1)">+</button>
+        </div>
+
+        <div class="fieldgrid">
+          <div class="field smallfield">
+            <label for="tsl_reps">Repetições válidas</label>
+            <input id="tsl_reps" type="number" min="0" />
+          </div>
+          <div class="field smallfield">
+            <label for="tsl_bracos">Uso dos braços</label>
+            <select id="tsl_bracos">
+              <option>Não</option>
+              <option>Sim</option>
+              <option>Parcial</option>
+              <option>Não realizado</option>
+            </select>
+          </div>
+          <div class="field smallfield">
+            <label for="tsl_auxilio">Nível de auxílio</label>
+            <select id="tsl_auxilio">
+              <option>Independente</option>
+              <option>Supervisão</option>
+              <option>Auxílio mínimo</option>
+              <option>Auxílio moderado</option>
+              <option>Auxílio máximo</option>
+              <option>Não realizado</option>
+            </select>
+          </div>
+          <div class="field smallfield">
+            <label for="tsl_borg_pos">Borg pós</label>
+            <input id="tsl_borg_pos" type="number" min="0" max="10" />
+          </div>
+          <div class="field full">
+            <label for="tsl_obs">Observações</label>
+            <input id="tsl_obs" placeholder="Pausas, dispneia, dor, tontura, instabilidade, interrupção precoce..." />
+          </div>
+        </div>
+        <div class="result" id="tslResult">Resultado: — repetições em 30 segundos.</div>
+      </div>
+    </section>
+
+    <section id="mrc" class="grid">
+      <div class="card two-third">
+        <div class="section-head">
+          <div>
+            <h2>Medical Research Council — MRC Sum Score</h2>
+            <div class="hint">Pontue cada grupo muscular de 0 a 5 bilateralmente. Total máximo: 60 pontos.</div>
+          </div>
+          <span class="pill">0–60 pontos</span>
+        </div>
+
+        <table class="mrc-table" aria-label="Tabela MRC">
+          <thead>
+            <tr>
+              <th>Grupo muscular</th>
+              <th>Direito</th>
+              <th>Esquerdo</th>
+            </tr>
+          </thead>
+          <tbody id="mrcBody"></tbody>
+        </table>
+
+        <div class="fieldgrid">
+          <div class="field smallfield">
+            <label for="mrc_total">Total MRC</label>
+            <input id="mrc_total" readonly />
+          </div>
+          <div class="field smallfield">
+            <label for="mrc_realizado">Status</label>
+            <select id="mrc_realizado">
+              <option>Realizado</option>
+              <option>Parcialmente realizado</option>
+              <option>Não realizado</option>
+            </select>
+          </div>
+          <div class="field wide">
+            <label for="mrc_motivo">Motivo se parcial/não realizado</label>
+            <input id="mrc_motivo" placeholder="Rebaixamento, dor, sedação, restrição, baixa compreensão..." />
+          </div>
+          <div class="field full">
+            <label for="mrc_obs">Observações</label>
+            <input id="mrc_obs" placeholder="Assimetria, déficit focal, fadiga, dor, cooperação, necessidade de comando verbal..." />
+          </div>
+        </div>
+        <div class="result" id="mrcResult">Total: 0/60.</div>
+      </div>
+
+      <div class="card third">
+        <h2>Guia rápido da pontuação MRC</h2>
+        <div class="result">
+          <strong>0</strong> sem contração<br>
+          <strong>1</strong> contração visível/palpável<br>
+          <strong>2</strong> movimento sem vencer gravidade<br>
+          <strong>3</strong> vence gravidade<br>
+          <strong>4</strong> vence resistência<br>
+          <strong>5</strong> força normal
+        </div>
+        <div class="notice">
+          Total abaixo de 48/60 costuma acender alerta para fraqueza importante, especialmente em contexto crítico. Use com julgamento clínico.
+        </div>
+      </div>
+    </section>
+
+    <section id="relatorio" class="grid">
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h2>Resumo para evolução</h2>
+            <div class="hint">Gere, copie e cole no prontuário. O texto usa apenas os dados preenchidos.</div>
+          </div>
+          <div class="actions no-print">
+            <button type="button" onclick="generateReport()">Atualizar texto</button>
+            <button type="button" class="secondary" onclick="copyReport()">Copiar</button>
+            <button type="button" class="secondary" onclick="window.print()">Imprimir</button>
+            <button type="button" class="ghost" onclick="exportJson()">Exportar JSON</button>
+          </div>
+        </div>
+        <textarea id="report" class="reportArea" placeholder="Clique em 'Gerar evolução' para criar o texto."></textarea>
+        <div class="footer-note">
+          Dados ficam salvos apenas no navegador/dispositivo. Evite compartilhar arquivo exportado com dados identificáveis sem autorização institucional.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">Salvo.</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const qsa = (sel) => Array.from(document.querySelectorAll(sel));
+
+function todayISO(){
+  const d = new Date();
+  const tzOffset = d.getTimezoneOffset() * 60000;
+  return new Date(d - tzOffset).toISOString().slice(0,10);
+}
+$("data").value = todayISO();
+
+function parseNum(id){
+  const v = String($(id)?.value ?? "").replace(",", ".");
+  const n = parseFloat(v);
+  return Number.isFinite(n) ? n : null;
+}
+function fmt(n, dec=1){
+  if(n === null || n === undefined || Number.isNaN(n)) return "—";
+  return Number(n).toLocaleString("pt-BR", {minimumFractionDigits:dec, maximumFractionDigits:dec});
+}
+function fmtSec(n){ return n == null ? "—" : fmt(n,2) + " s"; }
+function nonempty(v){ return v !== null && v !== undefined && String(v).trim() !== ""; }
+function val(id){ return ($(id)?.value || "").trim(); }
+
+function showToast(msg="Salvo."){
+  const t=$("toast");
+  t.textContent=msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 1900);
+}
+
+/* -------- local save -------- */
+const storageKey = "avaliacao_internados_v1";
+function allFields(){
+  return qsa("input, select, textarea").filter(el => el.id && el.id !== "report");
+}
+function collectData(){
+  const data = {};
+  allFields().forEach(el => data[el.id] = el.value);
+  data.repCounter = $("repCounter").textContent;
+  return data;
+}
+function applyData(data){
+  if(!data) return;
+  Object.entries(data).forEach(([k,v]) => {
+    const el = $(k);
+    if(el) el.value = v;
+  });
+  if(data.repCounter !== undefined) $("repCounter").textContent = data.repCounter;
+  updateAll();
+}
+function saveNow(){
+  localStorage.setItem(storageKey, JSON.stringify(collectData()));
+  showToast("Avaliação salva neste dispositivo.");
+}
+function autoSave(){
+  localStorage.setItem(storageKey, JSON.stringify(collectData()));
+}
+function clearForm(){
+  if(!confirm("Limpar todos os dados desta avaliação?")) return;
+  allFields().forEach(el => {
+    if(el.tagName === "SELECT") el.selectedIndex = 0;
+    else el.value = "";
+  });
+  $("data").value = todayISO();
+  $("repCounter").textContent = "0";
+  $("report").value = "";
+  localStorage.removeItem(storageKey);
+  resetTug();
+  resetTsl();
+  buildMrc(); // reseta selects para zero
+  updateAll();
+  showToast("Formulário limpo.");
+}
+allFields().forEach(el => el.addEventListener("input", () => {updateAll(); autoSave();}));
+window.addEventListener("load", () => {
+  const saved = localStorage.getItem(storageKey);
+  if(saved){
+    try{ applyData(JSON.parse(saved)); }catch(e){}
+  }
+});
+
+/* -------- TUG stopwatch -------- */
+let tugRunning=false, tugStart=0, tugElapsed=0, tugRAF=null;
+function renderTug(){
+  const secs = tugElapsed / 1000;
+  $("tugDisplay").textContent = fmt(secs,2) + " s";
+}
+function tickTug(){
+  if(tugRunning){
+    tugElapsed = performance.now() - tugStart;
+    renderTug();
+    tugRAF = requestAnimationFrame(tickTug);
+  }
+}
+function toggleTug(){
+  if(!tugRunning){
+    tugRunning=true;
+    tugStart = performance.now() - tugElapsed;
+    $("tugStartBtn").textContent = "Parar";
+    tugRAF = requestAnimationFrame(tickTug);
+  } else {
+    tugRunning=false;
+    $("tugStartBtn").textContent = "Iniciar";
+    if(tugRAF) cancelAnimationFrame(tugRAF);
+    renderTug();
+  }
+}
+function resetTug(){
+  tugRunning=false; tugElapsed=0;
+  if(tugRAF) cancelAnimationFrame(tugRAF);
+  $("tugStartBtn").textContent = "Iniciar";
+  renderTug();
+}
+function saveTugTrial(){
+  const seconds = +(tugElapsed/1000).toFixed(2);
+  if(seconds <= 0){ showToast("Cronômetro zerado."); return; }
+  const target = ["tug1","tug2","tug3"].find(id => !nonempty(val(id))) || "tug3";
+  $(target).value = seconds.toFixed(2);
+  updateTug(); autoSave();
+  showToast("Tempo salvo em " + target.toUpperCase().replace("TUG","TUG "));
+}
+
+/* -------- TSL countdown + counter -------- */
+let tslRunning=false, tslStart=0, tslRemaining=30000, tslRAF=null;
+function renderTsl(){
+  const secs = Math.max(0, tslRemaining)/1000;
+  $("tslDisplay").textContent = fmt(secs,2) + " s";
+}
+function tickTsl(){
+  if(!tslRunning) return;
+  tslRemaining = 30000 - (performance.now() - tslStart);
+  if(tslRemaining <= 0){
+    tslRemaining = 0;
+    tslRunning = false;
+    $("tslStartBtn").textContent = "Iniciar";
+    renderTsl();
+    syncTslReps();
+    beep();
+    showToast("Tempo finalizado: 30 segundos.");
+    return;
+  }
+  renderTsl();
+  tslRAF = requestAnimationFrame(tickTsl);
+}
+function toggleTsl(){
+  if(!tslRunning){
+    if(tslRemaining <= 0) tslRemaining = 30000;
+    tslRunning = true;
+    tslStart = performance.now() - (30000 - tslRemaining);
+    $("tslStartBtn").textContent = "Pausar";
+    tslRAF = requestAnimationFrame(tickTsl);
+  } else {
+    tslRunning=false;
+    $("tslStartBtn").textContent = "Iniciar";
+    if(tslRAF) cancelAnimationFrame(tslRAF);
+  }
+}
+function resetTsl(){
+  tslRunning=false; tslRemaining=30000;
+  if(tslRAF) cancelAnimationFrame(tslRAF);
+  $("tslStartBtn").textContent = "Iniciar";
+  $("repCounter").textContent = "0";
+  renderTsl();
+}
+function changeReps(delta){
+  const curr = parseInt($("repCounter").textContent || "0",10) || 0;
+  const next = Math.max(0, curr + delta);
+  $("repCounter").textContent = String(next);
+  $("tsl_reps").value = String(next);
+  updateTsl(); autoSave();
+}
+function syncTslReps(){
+  $("tsl_reps").value = $("repCounter").textContent;
+  updateTsl(); autoSave();
+}
+$("tsl_reps").addEventListener("input", () => {
+  const n = Math.max(0, parseInt($("tsl_reps").value || "0",10) || 0);
+  $("repCounter").textContent = String(n);
+});
+function beep(){
+  try{
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.frequency.value = 880;
+    osc.connect(gain); gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.18);
+  }catch(e){}
+}
+
+/* -------- MRC -------- */
+const mrcGroups = [
+  ["ombro_abd", "Abdução de ombro"],
+  ["cotovelo_flex", "Flexão de cotovelo"],
+  ["punho_ext", "Extensão de punho"],
+  ["quadril_flex", "Flexão de quadril"],
+  ["joelho_ext", "Extensão de joelho"],
+  ["tornozelo_dorsi", "Dorsiflexão de tornozelo"]
+];
+function scoreSelect(id){
+  return `<select id="${id}" aria-label="${id}">
+    <option value="0">0</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+  </select>`;
+}
+function buildMrc(){
+  $("mrcBody").innerHTML = mrcGroups.map(([key,label]) => `
+    <tr>
+      <td>${label}</td>
+      <td>${scoreSelect("mrc_"+key+"_d")}</td>
+      <td>${scoreSelect("mrc_"+key+"_e")}</td>
+    </tr>
+  `).join("");
+  qsa("#mrcBody select").forEach(s => s.addEventListener("input", () => {updateMrc(); autoSave();}));
+}
+buildMrc();
+
+function updateMrc(){
+  let total = 0;
+  qsa("#mrcBody select").forEach(s => total += parseInt(s.value || "0",10));
+  $("mrc_total").value = total + "/60";
+  let interp = "";
+  if(total === 0) interp = "Sem pontuação registrada ou força ausente nos itens marcados.";
+  else if(total < 48) interp = "Alerta: total abaixo de 48/60, compatível com fraqueza importante quando o teste foi adequadamente realizado.";
+  else interp = "Total igual ou acima de 48/60.";
+  $("mrcResult").innerHTML = `Total: <strong>${total}/60</strong>. ${interp}`;
+}
+
+/* -------- Calculations -------- */
+function updateTug(){
+  const vals = ["tug1","tug2","tug3"].map(parseNum).filter(n => n !== null);
+  if(vals.length){
+    const best = Math.min(...vals);
+    const mean = vals.reduce((a,b)=>a+b,0)/vals.length;
+    let interp = "";
+    if(best < 10) interp = '<span class="ok">Referência geral: mobilidade preservada.</span>';
+    else if(best < 20) interp = '<span class="warnText">Referência geral: atenção para mobilidade funcional.</span>';
+    else interp = '<span class="dangerText">Referência geral: maior risco funcional/necessidade de auxílio.</span>';
+    $("tugResult").innerHTML = `Melhor tempo: <strong>${fmtSec(best)}</strong> · Média: <strong>${fmtSec(mean)}</strong><br>${interp}`;
+  }else{
+    $("tugResult").textContent = "Melhor tempo: — · Média: —";
+  }
+}
+function updateFpm(){
+  const dVals = ["fpm_d1","fpm_d2","fpm_d3"].map(parseNum).filter(n => n !== null);
+  const eVals = ["fpm_e1","fpm_e2","fpm_e3"].map(parseNum).filter(n => n !== null);
+  const dBest = dVals.length ? Math.max(...dVals) : null;
+  const eBest = eVals.length ? Math.max(...eVals) : null;
+  $("fpm_d_melhor").value = dBest == null ? "" : fmt(dBest,1);
+  $("fpm_e_melhor").value = eBest == null ? "" : fmt(eBest,1);
+  const geral = [dBest,eBest].filter(n => n !== null);
+  if(!geral.length){
+    $("fpmResult").textContent = "Melhor valor geral: —";
+    return;
+  }
+  const best = Math.max(...geral);
+  const sexo = val("sexo");
+  let note = "";
+  if(val("fpm_unidade") === "kgf"){
+    if(sexo === "Masculino" && best < 28) note = '<span class="dangerText">Abaixo de 28 kgf: sugere baixa força pelo critério AWGS 2019.</span>';
+    else if(sexo === "Feminino" && best < 18) note = '<span class="dangerText">Abaixo de 18 kgf: sugere baixa força pelo critério AWGS 2019.</span>';
+    else if(sexo === "Masculino" || sexo === "Feminino") note = '<span class="ok">Acima do ponto de corte AWGS 2019 informado para sexo.</span>';
+    else note = 'Selecione sexo para alerta por ponto de corte AWGS 2019.';
+  } else {
+    note = "Unidade em Newton: sem alerta automático por kgf.";
+  }
+  $("fpmResult").innerHTML = `Melhor valor geral: <strong>${fmt(best,1)} ${val("fpm_unidade") || "kgf"}</strong><br>${note}`;
+}
+function updateCp(){
+  const d = parseNum("cp_d"), e = parseNum("cp_e");
+  const vals = [d,e].filter(n => n !== null);
+  if(vals.length){
+    const menor = Math.min(...vals);
+    $("cp_menor").value = fmt(menor,1);
+    let note = menor < 31 ? '<span class="warnText">Menor que 31 cm: atenção para baixa reserva muscular, especialmente em idosos.</span>' : '<span class="ok">Igual ou acima de 31 cm na menor medida.</span>';
+    $("cpResult").innerHTML = `Menor circunferência: <strong>${fmt(menor,1)} cm</strong><br>${note}`;
+  } else {
+    $("cp_menor").value = "";
+    $("cpResult").textContent = "Menor circunferência: —";
+  }
+}
+function updateTsl(){
+  const reps = parseInt(val("tsl_reps") || "0", 10);
+  $("tslResult").innerHTML = Number.isFinite(reps) && reps > 0
+    ? `Resultado: <strong>${reps}</strong> repetições em 30 segundos.`
+    : "Resultado: — repetições em 30 segundos.";
+}
+function updateAll(){
+  updateTug(); updateFpm(); updateCp(); updateTsl(); updateMrc();
+}
+
+/* -------- report -------- */
+function line(label, value, suffix=""){
+  return nonempty(value) ? `${label}: ${value}${suffix}` : null;
+}
+function joinLines(lines){ return lines.filter(Boolean).join("\n"); }
+function reportMrcItems(){
+  return mrcGroups.map(([key,label]) => {
+    const d = val("mrc_"+key+"_d");
+    const e = val("mrc_"+key+"_e");
+    return `${label}: D ${d}/5; E ${e}/5`;
+  }).join("; ");
+}
+function generateReport(){
+  updateAll();
+  const tugVals = ["tug1","tug2","tug3"].map(id => val(id)).filter(nonempty);
+  const tugNums = tugVals.map(v => parseFloat(String(v).replace(",", "."))).filter(Number.isFinite);
+  const tugBest = tugNums.length ? Math.min(...tugNums) : null;
+  const tugMean = tugNums.length ? tugNums.reduce((a,b)=>a+b,0)/tugNums.length : null;
+
+  const fpmD = [val("fpm_d1"), val("fpm_d2"), val("fpm_d3")].filter(nonempty).join(" / ");
+  const fpmE = [val("fpm_e1"), val("fpm_e2"), val("fpm_e3")].filter(nonempty).join(" / ");
+
+  const ident = joinLines([
+    `AVALIAÇÃO FÍSICO-FUNCIONAL DO PACIENTE INTERNADO`,
+    line("Paciente", val("paciente")),
+    line("Prontuário", val("prontuario")),
+    line("Data", val("data")),
+    line("Idade", val("idade"), " anos"),
+    line("Sexo", val("sexo")),
+    line("Leito/Enfermaria", val("leito")),
+    line("Diagnóstico/condição principal", val("diagnostico")),
+    line("Avaliador", val("avaliador")),
+  ]);
+
+  const ssvv = joinLines([
+    `\nSSVV/CONDIÇÃO INICIAL`,
+    line("PA pré", val("pa_pre")),
+    line("FC pré", val("fc_pre"), " bpm"),
+    line("SpO₂ pré", val("spo2_pre"), "%"),
+    line("Borg pré", val("borg_pre"), "/10"),
+    line("Observações de segurança", val("triagem"))
+  ]);
+
+  const tug = joinLines([
+    `\nTUG 3 METROS`,
+    tugVals.length ? `Tempos registrados: ${tugVals.join(" / ")} s.` : null,
+    tugBest !== null ? `Melhor tempo: ${fmt(tugBest,2)} s.` : null,
+    tugMean !== null ? `Média das tentativas: ${fmt(tugMean,2)} s.` : null,
+    line("Nível de auxílio", val("tug_auxilio")),
+    line("Dispositivo/apoio", val("tug_dispositivo")),
+    line("Observações", val("tug_obs"))
+  ]);
+
+  const fpm = joinLines([
+    `\nDINAMOMETRIA DE PUNHO (FPM)`,
+    line("Dominância", val("dominancia")),
+    line("Posição", val("fpm_posicao")),
+    line("Unidade", val("fpm_unidade")),
+    fpmD ? `MSD: ${fpmD} ${val("fpm_unidade") || "kgf"}. Melhor MSD: ${val("fpm_d_melhor") || "—"} ${val("fpm_unidade") || "kgf"}.` : null,
+    fpmE ? `MSE: ${fpmE} ${val("fpm_unidade") || "kgf"}. Melhor MSE: ${val("fpm_e_melhor") || "—"} ${val("fpm_unidade") || "kgf"}.` : null,
+    line("Limitação", val("fpm_limitacao")),
+    line("Observações", val("fpm_obs"))
+  ]);
+
+  const cp = joinLines([
+    `\nCIRCUNFERÊNCIA DE PANTURRILHA (CP)`,
+    line("CP direita", val("cp_d"), " cm"),
+    line("CP esquerda", val("cp_e"), " cm"),
+    line("Menor CP", val("cp_menor"), " cm"),
+    line("Edema MMII", val("edema")),
+    line("Observações", val("cp_obs"))
+  ]);
+
+  const tsl = joinLines([
+    `\nTESTE DE SENTAR E LEVANTAR DE 30 SEGUNDOS (TSL30s)`,
+    line("Repetições válidas", val("tsl_reps")),
+    line("Uso dos braços", val("tsl_bracos")),
+    line("Nível de auxílio", val("tsl_auxilio")),
+    line("Borg pós", val("tsl_borg_pos"), "/10"),
+    line("Observações", val("tsl_obs"))
+  ]);
+
+  const mrc = joinLines([
+    `\nMRC SUM SCORE`,
+    line("Status", val("mrc_realizado")),
+    line("Total", val("mrc_total")),
+    `Itens: ${reportMrcItems()}.`,
+    line("Motivo se parcial/não realizado", val("mrc_motivo")),
+    line("Observações", val("mrc_obs"))
+  ]);
+
+  const final = joinLines([
+    ident, ssvv, tug, fpm, cp, tsl, mrc,
+    `\nCONDUTA/INTERPRETAÇÃO`,
+    `Paciente avaliado conforme tolerância clínica no momento. Resultados devem ser interpretados em conjunto com quadro clínico, sinais vitais, restrições, dor, fadiga, nível de consciência e risco de queda.`,
+  ]);
+
+  $("report").value = final;
+  autoSave();
+  showToast("Evolução gerada.");
+}
+async function copyReport(){
+  if(!val("report")) generateReport();
+  try{
+    await navigator.clipboard.writeText($("report").value);
+    showToast("Texto copiado.");
+  }catch(e){
+    $("report").select();
+    document.execCommand("copy");
+    showToast("Texto copiado.");
+  }
+}
+function exportJson(){
+  const data = collectData();
+  data.report = $("report").value;
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json;charset=utf-8"});
+  const a = document.createElement("a");
+  const name = (val("paciente") || "avaliacao").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^\w]+/g,"_").replace(/^_|_$/g,"");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${name || "avaliacao"}_${todayISO()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();}, 100);
+}
+
+/* -------- PWA install -------- */
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  $("installBtn").hidden = false;
+});
+$("installBtn").addEventListener("click", async () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  $("installBtn").hidden = true;
+});
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  });
+}
+
+renderTug();
+renderTsl();
+updateAll();
+</script>
+</body>
+</html>

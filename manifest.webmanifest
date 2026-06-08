@@ -1,0 +1,18 @@
+{
+  "name": "Avaliação de Pacientes Internados",
+  "short_name": "Avaliação Internados",
+  "description": "Webapp para TUG 3 m, FPM, CP, TSL30s e MRC em pacientes internados.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
